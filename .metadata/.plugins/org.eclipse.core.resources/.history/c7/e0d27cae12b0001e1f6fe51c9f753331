@@ -1,0 +1,44 @@
+grammar org.xtext.example.mydsl.MyDsl with org.eclipse.xtext.common.Terminals
+
+generate myDsl "http://www.xtext.org/example/mydsl/MyDsl"
+
+DBModel:
+    {DBModel}
+    'DBModel' '{'
+        'collections' '[' collections+=Collection* ']'
+    '}';
+
+
+Collection:
+    'Collection' name=STRING '{'
+        'fields' '{' fields+=Field* '}'
+        'indexes' '{' indexes+=Index* '}'
+        seedData=SeedData?
+    '}';
+
+Field:
+    'Field' name=STRING ':' type=DataType;
+
+DataType:
+    {DataType} 'String' | {DataType} 'Number' | {DataType} 'Boolean' | {DataType} 'Date' | {DataType} 'Object' | 'Array' '<' dataType=DataType '>' | {DataType} 'ObjectId';
+
+Index:
+    'Index' name=STRING ':' '{' fields+=STRING* ',' fields+=STRING* '}';
+
+SeedData:
+    'seedData' collectionName=STRING '{' dataArrays+=DataArray* '}';
+
+DataArray:
+    name=ID '{' dataPairs+=DataPair* '}';
+
+DataPair:
+    fieldName=STRING ':' '{' value=DataValue ',' dataType=DataType '}';
+
+terminal BOOLEAN: 'true' | 'false';
+terminal DOUBLE: ('0'..'9')+ '.' ('0'..'9')* | '.' ('0'..'9')+;
+
+DataValue:
+    stringValue=STRING
+  | intValue=INT
+  | doubleValue=DOUBLE
+  | booleanValue=BOOLEAN;
